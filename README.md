@@ -8,7 +8,7 @@ and troubleshooting.
 It works for any industry and any model. Every example uses neutral placeholder IDs that you
 swap for your own.
 
-**[→ Browse the 20 interactive use cases](docs/use-cases.html)** (open locally, or enable GitHub Pages on `/docs`)
+**[→ Browse the 20 interactive use cases](https://ahmedtareksdg.github.io/sac-excel-addin-skill-repo/use-cases.html)** (open locally, or enable GitHub Pages on `/docs`)
 
 ---
 

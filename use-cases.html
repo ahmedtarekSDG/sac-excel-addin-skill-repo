@@ -141,6 +141,24 @@ section.ref p.sub{margin:0 0 16px;color:var(--ink-2)}
 .legend h3{margin:0 0 8px;font-size:14px}
 .legend ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink-2)}
 .legend .warn{border-color:#f1c27d;background:color-mix(in srgb,#f1c27d 12%,var(--panel))}
+/* Ctl sheet */
+.ctl-intro{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin:0 0 18px;display:grid;grid-template-columns:minmax(240px,1fr) minmax(320px,1.6fr);gap:18px;align-items:start}
+@media (max-width:820px){.ctl-intro{grid-template-columns:1fr}}
+.ctl-intro>*{min-width:0}
+details.ctl-used{min-width:0}
+.ctl-intro h2{font-size:17px;margin:0 0 6px}
+.ctl-intro p{margin:0 0 8px;color:var(--ink-2);font-size:14px}
+.ctl-intro .legend-row{display:flex;flex-wrap:wrap;gap:8px;font-size:12px;color:var(--ink-3);margin-top:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px;border:1px solid var(--line-2)}
+details.ctl-used summary{cursor:pointer;font-weight:700;font-size:12.5px;color:var(--ink-2);list-style:none;display:flex;align-items:center;gap:6px;margin-bottom:6px}
+details.ctl-used summary::-webkit-details-marker{display:none}
+details.ctl-used summary::before{content:"▸";transition:transform .15s}
+details.ctl-used[open] summary::before{transform:rotate(90deg)}
+details.ctl-used summary code{font-weight:600;color:var(--ink-3)}
+table.xl td.note{color:var(--ink-3);font-family:var(--mono);font-size:11.5px;white-space:normal;overflow-wrap:anywhere;min-width:180px;width:55%}
+.tabs{display:flex;gap:2px;background:var(--code-bg);border-top:1px solid var(--line-2);padding:0 8px}
+.tabs span{font:600 11.5px var(--sans);padding:4px 12px;color:var(--ink-3)}
+.tabs span.on{background:var(--panel);color:var(--sel);border-bottom:2px solid var(--sel)}
 footer{border-top:1px solid var(--line);padding:24px 0 40px;color:var(--ink-3);font-size:13px}
 footer p{margin:4px 0}
 @media (max-width:620px){
@@ -164,7 +182,7 @@ footer p{margin:4px 0}
     </ul>
     <div class="actions">
       <a class="btn btn-primary" href="#reference">Function reference ↓</a>
-      <a class="btn btn-ghost" href="../README.md">About the skill</a>
+      <a class="btn btn-ghost" href="https://github.com/ahmedtarekSDG/sac-excel-addin-skill-repo">View on GitHub</a>
     </div>
   </div>
 </header>
@@ -182,6 +200,15 @@ footer p{margin:4px 0}
 
 <main>
   <div class="wrap">
+    <section class="ctl-intro" id="ctl" aria-labelledby="ctlh">
+      <div>
+        <h2 id="ctlh">The <code>Ctl</code> sheet behind every example</h2>
+        <p>Formulas never hardcode the data source, version or period. They point at a small Control sheet named <b>Ctl</b>, so the whole workbook moves to another model, entity or month by editing a few cells.</p>
+        <p>Each card below lists the <code>Ctl</code> cells its formulas use. Production workbooks use the fuller layout in <code>report-architecture.md</code>.</p>
+        <div class="legend-row"><span><i class="sw" style="background:var(--in)"></i>input you edit</span><span><i class="sw" style="background:var(--res)"></i>derived / model reference</span></div>
+      </div>
+      <div id="ctlFull"></div>
+    </section>
     <div class="grid" id="grid"></div>
     <p class="empty" id="empty">No use case matches. Try another word or category.</p>
 
@@ -263,12 +290,12 @@ const UC = [
 { id:"rolling-timeoffset", title:"Rolling 12 months with TIMEOFFSET", cats:["time","rep"], funcs:["TIMEOFFSET","GETDATA"],
   need:"A trend that always ends at the latest closed month. Change one anchor cell and the whole window slides.",
   sheet:{cols:["A","C","D","…","N"], rows:[
-    {n:2,c:[{m:"labels"},{v:"Jul-24",f:'=SAP.TIMEOFFSET(Ctl!$B$3,Ctl!$B$5,"-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0",1,1)'},{v:"Aug-24",cls:"m"},{m:"…"},{v:"Jun-25",cls:"m"}]},
-    {n:3,c:[{m:"IDs"},{v:"202407",f:'=SAP.TIMEOFFSET(Ctl!$B$3,Ctl!$B$5,"-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0",0,1)',sel:1},{v:"202408",cls:"m"},{m:"…"},{v:"202506",cls:"m"}]},
+    {n:2,c:[{m:"labels"},{v:"Jul-24",f:'=SAP.TIMEOFFSET(Ctl!$B$3,Ctl!$B$5,Ctl!$B$9,1,1)'},{v:"Aug-24",cls:"m"},{m:"…"},{v:"Jun-25",cls:"m"}]},
+    {n:3,c:[{m:"IDs"},{v:"202407",f:'=SAP.TIMEOFFSET(Ctl!$B$3,Ctl!$B$5,Ctl!$B$9,0,1)',sel:1},{v:"202408",cls:"m"},{m:"…"},{v:"202506",cls:"m"}]},
     {n:5,c:[{r:"REVENUE"},{v:"801",f:'=SAP.GETDATA(Ctl!$B$3,"Account",$A5,"Date",C$3,"Version","public.Actual")'},{v:"812",f:'=SAP.GETDATA(Ctl!$B$3,"Account",$A5,"Date",D$3,"Version","public.Actual")'},{m:"…"},{v:"866",f:'=SAP.GETDATA(Ctl!$B$3,"Account",$A5,"Date",N$3,"Version","public.Actual")'}]}
   ], note:"Row 3 is one spilled formula (horizontal, orientation 1)."},
-  formulas:[["C3",'=SAP.TIMEOFFSET(Ctl!$B$3,Ctl!$B$5,"-11,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0",0,1)'],["Ctl!B9",'=TEXTJOIN(",",,SEQUENCE(1,12,-11))'],["C5",'=SAP.GETDATA(Ctl!$B$3,"Account",$A5,"Date",C$3,"Version","public.Actual")']],
-  tips:["The signature is <code>(Table, Reference_date, \"offsets\", [Display], [Orientation], [Dimension])</code>. It is <b>not</b> (Dim, Member, Offset).","Only works on a time <b>hierarchy</b>, and not on SAP BW or S/4HANA sources. On those, use the native axis (next card).","Reference the offsets text from a cell (Ctl!B9) to make the window length configurable."]},
+  formulas:[["C3",'=SAP.TIMEOFFSET(Ctl!$B$3,Ctl!$B$5,Ctl!$B$9,0,1)'],["Ctl!B9",'=TEXTJOIN(",",,SEQUENCE(1,12,-11))'],["C5",'=SAP.GETDATA(Ctl!$B$3,"Account",$A5,"Date",C$3,"Version","public.Actual")']],
+  tips:["Ctl!B9 holds the offsets text <code>-11,-10,…,0</code>; a literal string works too.","The signature is <code>(Table, Reference_date, \"offsets\", [Display], [Orientation], [Dimension])</code>. It is <b>not</b> (Dim, Member, Offset).","Only works on a time <b>hierarchy</b>, and not on SAP BW or S/4HANA sources. On those, use the native axis (next card).","Reference the offsets text from a cell (Ctl!B9) to make the window length configurable."]},
 
 { id:"rolling-native", title:"Native-Excel rolling axis (fastest, any source)", cats:["time"], funcs:["GETDATA"],
   need:"The same sliding window without an asynchronous call. It works on flat time dimensions and on BW and S/4HANA sources.",
@@ -335,20 +362,20 @@ const UC = [
   need:"Cost center owners type their monthly budget into a clean form. The values are written back to the planning model and checked with a read-back column.",
   sheet:{cols:["A","B","C","D","P","Q"], rows:[
     {n:7,c:[{h:"Account"},{h:"Name"},{h:"Jan"},{h:"Feb"},{h:"→ model Jan"},{h:"read-back"}]},
-    {n:8,c:[{r:"OPEX_TRAVEL"},"Travel",{i:"12,000"},{i:"9,500"},{v:"12,000",f:'=SAP.SETDATA(Ctl!$B$3,C8,"Version",Ctl!$B$4,"CostCenter",Ctl!$B$5,"Account",$A8,"Date",C$6)',sel:1},{v:"12,000",f:'=SAP.GETDATA(Ctl!$B$3,"Version",Ctl!$B$4,"CostCenter",Ctl!$B$5,"Account",$A8,"Date",C$6)'}]},
-    {n:9,c:[{r:"OPEX_TRAIN"},"Training",{i:"4,000"},{i:"4,000"},{v:"4,000",f:'=SAP.SETDATA(Ctl!$B$3,C9,"Version",Ctl!$B$4,"CostCenter",Ctl!$B$5,"Account",$A9,"Date",C$6)'},{v:"4,000",f:'=SAP.GETDATA(Ctl!$B$3,"Version",Ctl!$B$4,"CostCenter",Ctl!$B$5,"Account",$A9,"Date",C$6)'}]}
+    {n:8,c:[{r:"OPEX_TRAVEL"},"Travel",{i:"12,000"},{i:"9,500"},{v:"12,000",f:'=SAP.SETDATA(Ctl!$B$3,C8,"Version",Ctl!$B$4,"CostCenter",Ctl!$B$6,"Account",$A8,"Date",C$6)',sel:1},{v:"12,000",f:'=SAP.GETDATA(Ctl!$B$3,"Version",Ctl!$B$4,"CostCenter",Ctl!$B$6,"Account",$A8,"Date",C$6)'}]},
+    {n:9,c:[{r:"OPEX_TRAIN"},"Training",{i:"4,000"},{i:"4,000"},{v:"4,000",f:'=SAP.SETDATA(Ctl!$B$3,C9,"Version",Ctl!$B$4,"CostCenter",Ctl!$B$6,"Account",$A9,"Date",C$6)'},{v:"4,000",f:'=SAP.GETDATA(Ctl!$B$3,"Version",Ctl!$B$4,"CostCenter",Ctl!$B$6,"Account",$A9,"Date",C$6)'}]}
   ], note:"Row 6 (hidden) holds period IDs 202601…; yellow = input."},
-  formulas:[["P8",'=SAP.SETDATA(Ctl!$B$3,C8,"Version",Ctl!$B$4,"CostCenter",Ctl!$B$5,"Account",$A8,"Date",C$6)'],["Q8",'=SAP.GETDATA(Ctl!$B$3,"Version",Ctl!$B$4,"CostCenter",Ctl!$B$5,"Account",$A8,"Date",C$6)']],
+  formulas:[["P8",'=SAP.SETDATA(Ctl!$B$3,C8,"Version",Ctl!$B$4,"CostCenter",Ctl!$B$6,"Account",$A8,"Date",C$6)'],["Q8",'=SAP.GETDATA(Ctl!$B$3,"Version",Ctl!$B$4,"CostCenter",Ctl!$B$6,"Account",$A8,"Date",C$6)']],
   tips:["Workflow: type → <b>Process Data</b> → Refresh → <b>Publish Data</b> (or Revert).","Every dimension you name must be a <b>leaf</b> member, and every combination must be unique.","A SETDATA write outside the planning area extends the area (2025.01+).","If you mix table input and SETDATA input, process twice (KBA 3763022)."]},
 
 { id:"driver-plan", title:"Driver-based plan: price × volume", cats:["plan"], funcs:["SETDATA"],
   need:"Sales planners enter volume and price per product. Excel calculates revenue and writes both the driver and the result.",
   sheet:{cols:["A","C","D","E","F","G"], rows:[
     {n:7,c:[{h:"Product"},{h:"Volume"},{h:"Price"},{h:"Revenue"},{h:"→ qty"},{h:"→ revenue"}]},
-    {n:8,c:[{r:"P100"},{i:"1,200"},{i:"45.00"},{v:"54,000",f:"=C8*D8"},{v:"1,200",f:'=SAP.SETDATA(Ctl!$B$3,C8,"Version",Ctl!$B$4,"Account","SALES_QTY","Product",$A8,"Date",Ctl!$B$6)'},{v:"54,000",f:'=SAP.SETDATA(Ctl!$B$3,E8,"Version",Ctl!$B$4,"Account","REVENUE","Product",$A8,"Date",Ctl!$B$6)',sel:1}]},
-    {n:9,c:[{r:"P200"},{i:"800"},{i:"60.00"},{v:"48,000",f:"=C9*D9"},{v:"800",f:'=SAP.SETDATA(Ctl!$B$3,C9,"Version",Ctl!$B$4,"Account","SALES_QTY","Product",$A9,"Date",Ctl!$B$6)'},{v:"48,000",f:'=SAP.SETDATA(Ctl!$B$3,E9,"Version",Ctl!$B$4,"Account","REVENUE","Product",$A9,"Date",Ctl!$B$6)'}]}
+    {n:8,c:[{r:"P100"},{i:"1,200"},{i:"45.00"},{v:"54,000",f:"=C8*D8"},{v:"1,200",f:'=SAP.SETDATA(Ctl!$B$3,C8,"Version",Ctl!$B$4,"Account","SALES_QTY","Product",$A8,"Date",Ctl!$B$7)'},{v:"54,000",f:'=SAP.SETDATA(Ctl!$B$3,E8,"Version",Ctl!$B$4,"Account","REVENUE","Product",$A8,"Date",Ctl!$B$7)',sel:1}]},
+    {n:9,c:[{r:"P200"},{i:"800"},{i:"60.00"},{v:"48,000",f:"=C9*D9"},{v:"800",f:'=SAP.SETDATA(Ctl!$B$3,C9,"Version",Ctl!$B$4,"Account","SALES_QTY","Product",$A9,"Date",Ctl!$B$7)'},{v:"48,000",f:'=SAP.SETDATA(Ctl!$B$3,E9,"Version",Ctl!$B$4,"Account","REVENUE","Product",$A9,"Date",Ctl!$B$7)'}]}
   ]},
-  formulas:[["G8",'=SAP.SETDATA(Ctl!$B$3,E8,"Version",Ctl!$B$4,"Account","REVENUE","Product",$A8,"Date",Ctl!$B$6)']],
+  formulas:[["G8",'=SAP.SETDATA(Ctl!$B$3,E8,"Version",Ctl!$B$4,"Account","REVENUE","Product",$A8,"Date",Ctl!$B$7)']],
   tips:["Write the result only if the model doesn't calculate it itself. Otherwise write the drivers and let model logic or a data action do the rest.","Point the version at a private version for a what-if sandbox, and publish only the approved scenario."]},
 
 { id:"seasonal-spread", title:"Spread an annual target by seasonality", cats:["plan"], funcs:["SETDATA"],
@@ -356,9 +383,9 @@ const UC = [
   sheet:{cols:["C","D","E","…","O"], rows:[
     {n:4,c:[{m:"profile"},{i:"6%"},{i:"7%"},{m:"…"},{i:"11%"}]},
     {n:5,c:[{i:"600,000"},{v:"36,000",f:"=ROUND($C5*D$4,2)"},{v:"42,000",f:"=ROUND($C5*E$4,2)"},{m:"…"},{v:"66,000",f:"=C5-SUM(D5:N5)"}]},
-    {n:6,c:[{m:"write"},{v:"36,000",f:'=SAP.SETDATA(Ctl!$B$3,D5,"Version",Ctl!$B$4,"Account",$A5,"Entity",Ctl!$B$5,"Date",D$3)',sel:1},{v:"42,000",f:'=SAP.SETDATA(Ctl!$B$3,E5,"Version",Ctl!$B$4,"Account",$A5,"Entity",Ctl!$B$5,"Date",E$3)'},{m:"…"},{v:"66,000",f:'=SAP.SETDATA(Ctl!$B$3,O5,"Version",Ctl!$B$4,"Account",$A5,"Entity",Ctl!$B$5,"Date",O$3)'}]}
+    {n:6,c:[{m:"write"},{v:"36,000",f:'=SAP.SETDATA(Ctl!$B$3,D5,"Version",Ctl!$B$4,"Account",$A5,"Entity",Ctl!$B$6,"Date",D$3)',sel:1},{v:"42,000",f:'=SAP.SETDATA(Ctl!$B$3,E5,"Version",Ctl!$B$4,"Account",$A5,"Entity",Ctl!$B$6,"Date",E$3)'},{m:"…"},{v:"66,000",f:'=SAP.SETDATA(Ctl!$B$3,O5,"Version",Ctl!$B$4,"Account",$A5,"Entity",Ctl!$B$6,"Date",O$3)'}]}
   ]},
-  formulas:[["D5","=ROUND($C5*D$4,2)"],["O5","=C5-SUM(D5:N5)"],["D6",'=SAP.SETDATA(Ctl!$B$3,D5,"Version",Ctl!$B$4,"Account",$A5,"Entity",Ctl!$B$5,"Date",D$3)']],
+  formulas:[["D5","=ROUND($C5*D$4,2)"],["O5","=C5-SUM(D5:N5)"],["D6",'=SAP.SETDATA(Ctl!$B$3,D5,"Version",Ctl!$B$4,"Account",$A5,"Entity",Ctl!$B$6,"Date",D$3)']],
   tips:["The last month takes the rounding difference, so the months always add up exactly to the target.","Check the profile with a total cell (= 100%) next to row 4."]},
 
 { id:"bulk-load", title:"Bulk load from a pasted flat list", cats:["plan"], funcs:["SETDATA"],
@@ -386,10 +413,10 @@ const UC = [
   need:"Show each line's value with the latest analyst comment, and flag large variances that still have no comment.",
   sheet:{cols:["A","E","F","G","H"], rows:[
     {n:4,c:[{h:"Account"},{h:"Value"},{h:"Last comment"},{h:"Δ Plan"},{h:"Check"}]},
-    {n:5,c:[{r:"REVENUE"},{v:"9,820",f:'=SAP.GETDATACOMMENT(Ctl!$B$3,1,"Account",$A5,"Date",Ctl!$B$5,"Version","public.Actual")',sel:1},{v:"Delayed order from key account",cls:"m"},{n:"-180"},{v:"",f:'=IF(AND(ABS(G5)>Ctl!$B$9,F5=""),"⚠ unexplained","")'}]},
-    {n:6,c:[{r:"OPEX"},{v:"-3,140",f:'=SAP.GETDATACOMMENT(Ctl!$B$3,1,"Account",$A6,"Date",Ctl!$B$5,"Version","public.Actual")'},{v:"",cls:"m"},{n:"-640"},{v:"⚠ unexplained",f:'=IF(AND(ABS(G6)>Ctl!$B$9,F6=""),"⚠ unexplained","")'}]}
+    {n:5,c:[{r:"REVENUE"},{v:"9,820",f:'=SAP.GETDATACOMMENT(Ctl!$B$3,1,"Account",$A5,"Date",Ctl!$B$5,"Version","public.Actual")',sel:1},{v:"Delayed order from key account",cls:"m"},{n:"-180"},{v:"",f:'=IF(AND(ABS(G5)>Ctl!$B$14,F5=""),"⚠ unexplained","")'}]},
+    {n:6,c:[{r:"OPEX"},{v:"-3,140",f:'=SAP.GETDATACOMMENT(Ctl!$B$3,1,"Account",$A6,"Date",Ctl!$B$5,"Version","public.Actual")'},{v:"",cls:"m"},{n:"-640"},{v:"⚠ unexplained",f:'=IF(AND(ABS(G6)>Ctl!$B$14,F6=""),"⚠ unexplained","")'}]}
   ], note:"Display 1 = value left, comment right: E5 spills into F5."},
-  formulas:[["E5",'=SAP.GETDATACOMMENT(Ctl!$B$3,1,"Account",$A5,"Date",Ctl!$B$5,"Version","public.Actual")'],["H5",'=IF(AND(ABS(G5)>Ctl!$B$9,F5=""),"⚠ unexplained","")']],
+  formulas:[["E5",'=SAP.GETDATACOMMENT(Ctl!$B$3,1,"Account",$A5,"Date",Ctl!$B$5,"Version","public.Actual")'],["H5",'=IF(AND(ABS(G5)>Ctl!$B$14,F5=""),"⚠ unexplained","")']],
   tips:["<b>Display is the 2nd argument</b>: 0 comment, 1 value | comment, 2 comment | value, 3/4 stacked.","Needs data point commenting enabled, and the source must be an SAC model.","Returns the <b>last</b> comment in the thread."]},
 
 { id:"master-data", title:"Master data enrichment without VLOOKUP tables", cats:["meta"], funcs:["MEMBERPROPERTY"],
@@ -489,6 +516,35 @@ async function copyText(txt, btn){
   setTimeout(()=>{ btn.textContent = old; btn.classList.remove("done"); }, 1200);
 }
 
+/* The Control sheet every example reads from: cell → [label, value, kind (i input | r derived/reference), note] */
+const CTL = {
+  B3:["Data source","DS_1","i","table name or formula data source alias, as a plain value"],
+  B4:["Version ID","public.Plan","i","plan / comparison version"],
+  B5:["Anchor period","202506","i","latest closed period"],
+  B6:["Selected member ID","CC100","i","entity / cost center / region, from a dropdown → ID"],
+  B7:["Planning period","202601","i","period written by planning forms"],
+  B8:["PY period","202406","r",'=TEXT(EDATE(DATE(LEFT(B5,4),MID(B5,5,2),1),-12),"yyyymm")'],
+  B9:["Offsets","-11,-10,…,0","r",'=TEXTJOIN(",",,SEQUENCE(1,12,-11))'],
+  B10:["Dim ID · account","Account","r","copied from SAP.GETDIMENSIONS"],
+  B11:["Dim ID · time","Date","r","copied from SAP.GETDIMENSIONS"],
+  B12:["Dim ID · version","Version","r","copied from SAP.GETDIMENSIONS"],
+  B13:["Dim ID · entity","Entity","r","copied from SAP.GETDIMENSIONS"],
+  B14:["Variance threshold","500","i","flag variances above this"]
+};
+const CTL_RE = /Ctl!\$?([A-Z]{1,3})\$?(\d+)/g;
+function ctlTable(addrs){
+  const rows = addrs.map(a => { const [lab,val,kind,note] = CTL[a]; const n = a.slice(1);
+    return `<tr><th scope="row">${n}</th><td class="cell l">${esc(lab)}</td><td class="cell ${kind} l">${esc(val)}</td><td class="cell note">${esc(note)}</td></tr>`; }).join("");
+  return `<div class="sheet"><div class="tbl-wrap"><table class="xl"><thead><tr><th></th><th scope="col">A</th><th scope="col">B</th><th scope="col">C · note</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <div class="tabs" aria-hidden="true"><span>Report</span><span class="on">Ctl</span><span>_Lists</span></div></div>`;
+}
+function ctlRefs(u){
+  const txt = [...(u.formulas||[]).map(f=>f[1]), ...(u.sheet ? u.sheet.rows.flatMap(r => r.c.map(c => (c && c.f) || "")) : [])].join(" ");
+  const set = new Set(); let m; CTL_RE.lastIndex = 0;
+  while ((m = CTL_RE.exec(txt))) { const a = m[1]+m[2]; if (CTL[a]) set.add(a); }
+  return [...set].sort((x,y) => (+x.slice(1)) - (+y.slice(1)));
+}
+
 /* ---------- render ---------- */
 function cellHTML(c, col, row){
   if (c === null || c === undefined || c === "") return `<td class="cell"></td>`;
@@ -532,6 +588,7 @@ function cardHTML(u, i){
     <p class="need">${esc(u.need)}</p>
     <div class="funcs">${funcs}</div>
     ${u.sheet ? sheetHTML(u.sheet) : termHTML(u.term)}
+    ${(() => { const r = ctlRefs(u); return r.length ? `<details class="ctl-used" open><summary>Ctl sheet: cells used here <code>${r.map(a=>"Ctl!"+a).join(" · ")}</code></summary>${ctlTable(r)}</details>` : ""; })()}
     <div class="flist">${fl}</div>
     <details class="tips"><summary>Why it works &amp; gotchas</summary><ul>${u.tips.map(t=>`<li>${t}</li>`).join("")}</ul></details>
   </article>`;
@@ -539,6 +596,7 @@ function cardHTML(u, i){
 
 const grid = $("#grid");
 grid.innerHTML = UC.map(cardHTML).join("");
+$("#ctlFull").innerHTML = ctlTable(Object.keys(CTL));
 $("#ucTotal").textContent = UC.length;
 
 $("#refTable tbody").innerHTML = REF.map(([n,s,d]) => s === null
